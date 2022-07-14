@@ -1,1 +1,36 @@
-<h1>Home</h1>
+{% extends './layout.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Home</h1>
+    <p>Welcome to "Craigslist-Like", {{ user }}</p>
+
+    <form action="http://127.0.0.1:5000/api/car-update" method="POST" class="form-inline">
+        <div class="form-group mb-2 w-75 pr-3">
+            <label for="statusInput" class="sr-only">How are you?</label>
+            <input type="text" class="form-control w-100" name="carInput" id="statusInput" placeholder="Add Car Information">
+        </div>
+        <button type="submit" class="btn btn-primary mb-2 w-25">Add Car</button>
+    </form>
+
+ 
+
+    {% for c in car_info %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <p>{{ c.make }}</p>
+                <p>{{ c.model }}</p>
+                <p>{{ c.year }}</p>
+                <p>{{ c.color }}</p>
+                <p>{{ c.price }}</p>
+                
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <span>{{ c.get_user().username }}</span>
+                <span>{{ c.date_created }}</span>
+
+            </div>        
+        </div>
+    {% endfor %}
+</div>
+{% endblock content %}

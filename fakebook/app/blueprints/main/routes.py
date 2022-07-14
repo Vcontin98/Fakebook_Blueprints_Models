@@ -1,12 +1,26 @@
 from flask import render_template
 from . import bp as app
+from app.blueprints.main.models import Car
 
 
 
     
 @app.route("/")
 def home():
-    return render_template('home.html')
+    car_info = Car.query.all()
+    
+    car_info.sort(key=lambda post: post.date_created, reverse=True)
+    
+    print(car_info)
+    
+    
+    context = {
+        "car_info": car_info,
+        "user": "Victor"
+    
+    }
+    
+    return render_template('home.html', **context)
     
 @app.route("/login")
 def login():

@@ -9,6 +9,8 @@ class User(db.Model):
     last_name = db.Column(db.String(50))
     password = db.Column(db.String(100))
     posts = db.relationship('Post',backref="user",lazy='dynamic')
+    car_info = db.relationship('Car',backref="user",lazy='dynamic')
+    
     
     
 class Post(db.Model):
@@ -23,4 +25,18 @@ class Blog(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     post_id = db.Column(db.Integer,db.ForeignKey('post.id'))
+    
+    
+class Car(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    make = db.Column(db.String(10))
+    model = db.Column(db.String(10))
+    year = db.Column(db.String(10))
+    color = db.Column(db.String(10))
+    price = db.Column(db.String(10))
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
+    def get_user(self):
+        return User.query.get(self.user_id)
     
