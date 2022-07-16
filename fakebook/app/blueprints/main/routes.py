@@ -1,12 +1,18 @@
-from flask import render_template
+from flask import redirect, render_template, redirect, url_for
 from . import bp as app
 from app.blueprints.main.models import Car
+from flask_login import login_required, current_user
 
 
 
     
 @app.route("/")
+#@login_required
 def home():
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login'))
+    
+    
     car_info = Car.query.all()
     
     car_info.sort(key=lambda post: post.date_created, reverse=True)

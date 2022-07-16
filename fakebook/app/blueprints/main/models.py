@@ -1,18 +1,24 @@
-from app import db
+from app import db, login_manager
 from datetime import datetime
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), unique=True)
     username = db.Column(db.String(50))
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(250))
     posts = db.relationship('Post',backref="user",lazy='dynamic')
     car_info = db.relationship('Car',backref="user",lazy='dynamic')
     
-    
-    
+    def hash_my_password(self, password):
+        self.password = generate_password_hash(password)
+        
+    def check_my_password(self, password):
+        return check_password_hash(self.password, password)
+ 
 class Post(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     body = db.Column(db.String(500))
@@ -29,14 +35,19 @@ class Blog(db.Model):
     
 class Car(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    make = db.Column(db.String(10))
-    model = db.Column(db.String(10))
-    year = db.Column(db.String(10))
-    color = db.Column(db.String(10))
-    price = db.Column(db.String(10))
+    make = db.Column(db.String(25))
+    model = db.Column(db.String(25))
+    year = db.Column(db.String(25))
+    color = db.Column(db.String(25))
+    price = db.Column(db.String(25))
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
     def get_user(self):
         return User.query.get(self.user_id)
+    
+    
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
     
